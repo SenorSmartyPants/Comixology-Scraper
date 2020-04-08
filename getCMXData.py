@@ -4,54 +4,24 @@ import re
 import requests 
 from bs4 import BeautifulSoup 
 
+import google
+
 debug = False
 
 CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
 
-GOOGLEURL = "https://www.google.com/search?q="
-GOOGLEBASESEARCH = "site:comixology.com inurl:digital-comic intitle:\"{0} ({1}\" intitle:\"#{2}\""
-COMICFORMATSEARCH = ' intitle:{0}'
 
-def buildGoogleQueryURL(series, volume, issue, format):
-    global debug
 
-    QS = GOOGLEBASESEARCH.format(series, volume, issue)
-    if format:
-        QS += COMICFORMATSEARCH.format(format)
 
-    QS = urllib.parse.quote(QS)
     
-    URL = GOOGLEURL + QS
-    if debug:
-        print(URL)
-    return URL
 
-def parseGoogleResult(r):
-    global debug
 
-    soup = BeautifulSoup(r.content, 'html.parser')
-    #should be first result - if found
-    aResult = soup.find('a', href=re.compile('url\?q=https:\/\/www.comixology.com'))
 
-    #for a in aResults:
-    #    print(a.get_text(strip=True))
-    #    print(a['href'])
 
-    if aResult:
-        matchCMXURL = re.search('url\?q=(.+?)[&?%]', aResult['href'])
-        CMXURL = matchCMXURL.group(1)
-        if debug:
-            print(CMXURL) 
 
-        matchCMXID = re.search('\/([0-9]+)$', CMXURL)
-        CMXID = matchCMXID.group(1)
-        if debug:
-            print(CMXID)
 
-        parseCMX(getResponseByID(CMXID))
-    else:
-      #not all series include the volume year
-        print("no match found on google.com")
+
+
 
 def findCMXURL(args):
     global debug
