@@ -104,6 +104,10 @@ byname.add_argument("--format", help="Don't include for regular series. \"Annual
 byname.add_argument("--debug", help="Output URLs being grabbed", action='store_true')
 byname.set_defaults(func=findCMXURL)
 
+#print help message if no args, then exit
+if len(sys.argv)==1:
+  parser.print_help(sys.stderr)
+  sys.exit(1)
 
 args = parser.parse_args()
 args.func(args)
