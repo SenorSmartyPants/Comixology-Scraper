@@ -1,5 +1,4 @@
 import argparse
-import urllib.parse
 import re
 import requests 
 from bs4 import BeautifulSoup 
@@ -13,7 +12,7 @@ CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
 
 
 
-    
+
 
 
 
