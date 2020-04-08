@@ -1,3 +1,4 @@
+import sys
 import argparse
 import re
 import requests 
@@ -23,11 +24,8 @@ CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
 
 
 def findCMXURL(args):
-    global debug
-    debug = args.debug
-    URL = buildGoogleQueryURL(args.series, args.volume, args.issue, args.format)
-    r = requests.get(URL)
-    parseGoogleResult(r)
+    CMXID = google.findCMXID(args)
+    parseCMX(getResponseByID(CMXID), CMXID)
 
 def getResponseByID(CMXID):
   URL = CMXBASEURL + CMXID
@@ -35,7 +33,7 @@ def getResponseByID(CMXID):
   r = requests.get(URL) 
   return r
 
-def parseCMX(r):
+def parseCMX(r, CMXID):
   
   soup = BeautifulSoup(r.content, 'html.parser') 
 
@@ -55,7 +53,7 @@ def parseCMX(r):
 
 def byCMXID(args):
   r = getResponseByID(args.CMXID)
-  parseCMX(r) 
+  parseCMX(r, args.CMXID) 
 
 
 parser = argparse.ArgumentParser(description='Get genre string for a comic from Comixology.com')
