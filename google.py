@@ -23,8 +23,7 @@ def buildGoogleQueryURL(series, volume, issue, format):
         print(URL)
     return URL
 
-def parseGoogleResult(r):
-    global debug
+def parseGoogleResult(r, debug = False):
 
     soup = BeautifulSoup(r.content, 'html.parser')
     #should be first result - if found
@@ -48,18 +47,18 @@ def parseGoogleResult(r):
             print("no match found on google.com")
         return None
 
-def googleSeries(series, volume, issue, format):
+def googleSeries(series, volume, issue, format, debug = False):
     URL = buildGoogleQueryURL(series, volume, issue, format)
+    if debug:
+        print(URL) 
     r = requests.get(URL)
-    return parseGoogleResult(r)
+    return parseGoogleResult(r, debug)
 
-def findCMXID(args):
-    global debug
-    debug = args.debug
-    CMXID = googleSeries(args.series, args.volume, args.issue, args.format)
+def findCMXID(series, volume, issue, format, debug = False):
+    CMXID = googleSeries(series, volume, issue, format, debug)
     if CMXID is None:
         #try without volume, if one was passed in
         if debug:
             print("Trying without volume")
-        CMXID = googleSeries(args.series, "", args.issue, args.format)
+        CMXID = googleSeries(series, "", issue, format, debug)
     return CMXID
