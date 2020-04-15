@@ -11,6 +11,14 @@ CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
 def buildComixologyURL(CMXID):
   return CMXBASEURL + CMXID
 
+def parseReleaseDate(releaseDateElement, metadata):
+  if releaseDateElement is not None:
+    releaseDateStr = releaseDateElement.find_next_sibling().get_text(strip=True)
+    releaseDate = datetime.strptime(releaseDateStr, '%B %d %Y')
+    metadata['Year'] = releaseDate.year
+    metadata['Month'] = releaseDate.month
+    metadata['Day'] = releaseDate.day
+
 def parseMultiple(soup):
   items = []
   for item in soup:
@@ -51,11 +59,12 @@ def parseCMX(r, CMXID, debug = False):
   pages = re.search('(.*) Pages', pageCount).group(1)
   metadata['pageCount'] = pages
 
-  printDateStr = soup.find("h4", text="Print Release Date").find_next_sibling().get_text(strip=True)
-  printDate = datetime.strptime(printDateStr, '%B %d %Y')
-  metadata['Year'] = printDate.year
-  metadata['Month'] = printDate.month
-  metadata['Day'] = printDate.day
+  releaseDateElement = soup.find("h4", text="Print Release Date")
+  if releaseDateElement is not None:
+    parseReleaseDate(releaseDateElement, metadata)
+  else:
+    releaseDateElement = soup.find("h4", text="Digital Release Date")
+    parseReleaseDate(releaseDateElement, metadata)
 
   metadata['Notes'] = "Tagged with Comixology-Scraper on {0}. [CMXDB{1}]".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
