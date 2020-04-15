@@ -12,31 +12,31 @@ def mapCMXtoMetadata(CMXData):
     md = GenericMetadata()
     md.isEmpty = False
 
-    md.series = CMXData['series']
-    md.volume = CMXData['volume'] 
-    md.issue = CMXData['issue']
+    md.series = CMXData.get('series', None)
+    md.volume = CMXData.get('volume', None) 
+    md.issue = CMXData.get('issue', None)
 
-    md.comments = CMXData['description']
-    md.webLink = CMXData['webLink']
-    #md.coverURL = CMXData['coverURL']
+    md.comments = CMXData.get('description', None)
+    md.webLink = CMXData.get('webLink', None)
+    #md.coverURL = CMXData.get('coverURL', None)
 
-    md.publisher = CMXData['publisher']
+    md.publisher = CMXData.get('publisher', None)
 
     #credits
     for role in ['Writer','Penciller','Inker','Colorist','Cover']: #,'Artist'
-        for person in CMXData[role]:
+        for person in CMXData.get(role, []):
             md.addCredit(person, role)
 
-    md.genre = ', '.join(CMXData['genres'])
+    md.genre = ', '.join(CMXData.get('genres', None))
 
     #?
-    #md.pageCount = CMXData['pageCount']
+    #md.pageCount = CMXData.get('pageCount', None)
 
-    md.year = CMXData['Year']
-    md.month = CMXData['Month']
-    md.day = CMXData['Day']
+    md.year = CMXData.get('Year', None)
+    md.month = CMXData.get('Month', None)
+    md.day = CMXData.get('Day', None)
 
-    md.notes = CMXData['Notes']
+    md.notes = CMXData.get('Notes', None)
 
     print("mapped data")
     print(md)
