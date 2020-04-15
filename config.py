@@ -9,3 +9,6 @@ scrape = {
     'releaseDate':  True, #Year, Month, Day
     'Notes': True
 }
+
+# overwrite existing non-null data?
+overwrite = False
