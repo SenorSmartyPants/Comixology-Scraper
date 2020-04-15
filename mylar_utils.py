@@ -39,6 +39,9 @@ def getComicArchive(filename):
 
     return ca
 
+def verifyMatch(mdOriginal, mdNew):
+    return mdOriginal.series == mdNew.series and mdOriginal.issue == mdNew.issue and mdOriginal.year == mdNew.year and mdOriginal.month == mdNew.month
+
 # mdOriginal = existing metadata in Comic archive
 # mdNew = newly scraped metadata
 def updateMetadata(mdOriginal, mdNew, style):

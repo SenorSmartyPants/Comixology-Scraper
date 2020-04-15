@@ -49,7 +49,11 @@ def processArchive(ca, style):
 
     #check for CMXDB in notes
     CMXID = getCMXIDFromString(md.notes)
-    print("CMXID in notes = {0}".format(CMXID))
+    if CMXID is not None:
+        print("CMXID in notes = {0}".format(CMXID))
+        IDinCA = True
+    else:
+        IDinCA = False
 
     if CMXID is None:
         CMXID = google.findCMXID(md.series, md.volume, md.issue, md.format)
@@ -59,7 +63,10 @@ def processArchive(ca, style):
         CMXData = getCMXData.byCMXID(CMXID)
         mdCMX = mapCMXtoMetadata(CMXData)
         
-        updateMetadata(md, mdCMX, style)
+        if IDinCA or verifyMatch(md, mdCMX):
+            updateMetadata(md, mdCMX, style)
+        else:
+            print('Not a close enough match')
 
 
 def main():
