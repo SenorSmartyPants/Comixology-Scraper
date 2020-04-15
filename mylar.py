@@ -17,7 +17,6 @@ def mapCMXtoMetadata(CMXData):
 
     md.comments = CMXData.get('description', None)
     md.webLink = CMXData.get('webLink', None)
-    #md.coverURL = CMXData.get('coverURL', None)
 
     md.publisher = CMXData.get('publisher', None)
 
@@ -27,9 +26,6 @@ def mapCMXtoMetadata(CMXData):
             md.addCredit(person, role)
 
     md.genre = ', '.join(CMXData.get('genres', None))
-
-    #?
-    #md.pageCount = CMXData.get('pageCount', None)
 
     md.year = CMXData.get('Year', None)
     md.month = CMXData.get('Month', None)
@@ -64,7 +60,7 @@ def processArchive(ca, style):
         mdCMX = mapCMXtoMetadata(CMXData)
         
         if IDinCA or verifyMatch(md, mdCMX):
-            updateMetadata(md, mdCMX, style)
+            updateMetadata(md, mdCMX, ca, style)
         else:
             print('Not a close enough match')
 

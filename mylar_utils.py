@@ -44,7 +44,7 @@ def verifyMatch(mdOriginal, mdNew):
 
 # mdOriginal = existing metadata in Comic archive
 # mdNew = newly scraped metadata
-def updateMetadata(mdOriginal, mdNew, style):
+def updateMetadata(mdOriginal, mdNew, ca, style):
     print('original data')
     print(mdOriginal)
 
@@ -68,8 +68,8 @@ def updateMetadata(mdOriginal, mdNew, style):
     print(mdUpdated)
 
     #save metadata
-    #if not ca.writeMetadata(mdUpdated, style):
-    #    print("The tag save seemed to fail!", file=sys.stderr)
-    #    return False
-    #else:
-    #    print("Save complete.", file=sys.stderr)    
+    if not ca.writeMetadata(mdUpdated, style):
+        print("The tag save seemed to fail!", file=sys.stderr)
+        return False
+    else:
+        print("Save complete.", file=sys.stderr)    
