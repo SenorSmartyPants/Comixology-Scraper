@@ -1,15 +1,15 @@
-import sys
 import re
 import requests 
 from pprint import pprint 
 from bs4 import BeautifulSoup 
 from datetime import datetime
 
-import google
 
-debug = False
 
 CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
+
+def buildComixologyURL(CMXID):
+  return CMXBASEURL + CMXID
 
 def parseMultiple(soup):
   items = []
@@ -17,13 +17,7 @@ def parseMultiple(soup):
     items.append(item.get_text(strip=True))
   return items
 
-def getResponseByID(CMXID):
-  URL = CMXBASEURL + CMXID
-  
-  r = requests.get(URL) 
-  return r
-
-def parseCMX(r, CMXID):
+def parseCMX(r, CMXID, debug = False):
   soup = BeautifulSoup(r.content, 'html.parser')
   
   metadata = {}
@@ -67,11 +61,10 @@ def parseCMX(r, CMXID):
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             CMXID)
 
-
-  pprint(metadata)
+  if debug:
+    pprint(metadata)
 
   return metadata
 
 def byCMXID(CMXID, debug = False):
-    r = getResponseByID(CMXID)
-    return parseCMX(r, CMXID, debug)
+    return parseCMX(requests.get(buildComixologyURL(CMXID)), CMXID, debug)
