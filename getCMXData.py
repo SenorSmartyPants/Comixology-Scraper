@@ -34,8 +34,7 @@ def parseCMX(r, CMXID, debug = False):
   titleVolumeAndIssue = soup.find("meta", attrs={'name':'twitter:title'})['content']
   match = re.search('(.*?)( \((\d{4})-\d{0,4}\))? #(.*?)( \(of \d\))?$', titleVolumeAndIssue)
   metadata['series'] = match.group(1)
-  if match.group(2) is not None:
-    metadata['volume'] = match.group(3)
+  metadata['volume'] = match.group(3)
   metadata['issue'] = match.group(4)
 
   metadata['description'] = soup.find("meta", attrs={'name':'description'})['content']
