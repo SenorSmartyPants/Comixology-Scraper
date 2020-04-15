@@ -84,10 +84,8 @@ def parseCMX(r, CMXID, debug = False):
             parseReleaseDate(releaseDateElement, metadata)
     # endregion
 
-    if cfg.scrape['Notes']:
-        metadata['Notes'] = "Tagged with Comixology-Scraper on {0}. [CMXDB{1}]".format(
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            CMXID)
+    metadata['Notes'] = "Scraped metadata from Comixology [CMXDB{0}]".format(
+        CMXID)
 
     if debug:
         pprint(metadata)
