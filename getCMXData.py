@@ -34,9 +34,12 @@ def parseCMX(r, CMXID, debug = False):
     # region content from head
     titleVolumeAndIssue = soup.find("meta", attrs={'name':'twitter:title'})['content']
     match = re.search('(.*?)( \((\d{4})-\d{0,4}\))? #(.*?)( \(of \d\))?$', titleVolumeAndIssue)
-    metadata['series'] = match.group(1)
-    metadata['volume'] = match.group(3)
-    metadata['issue'] = match.group(4)
+    if cfg.scrape['series']:
+        metadata['series'] = match.group(1)
+    if cfg.scrape['volume']:
+        metadata['volume'] = match.group(3)
+    if cfg.scrape['issue']:
+        metadata['issue'] = match.group(4)
 
     if cfg.scrape['description']:
         metadata['description'] = soup.find("meta", attrs={'name':'description'})['content']
