@@ -46,13 +46,15 @@ def parseCMX(r, CMXID, debug = False):
   #content from body
   metadata['publisher'] = soup.find("h3", attrs={'title':'Publisher'}).get_text(strip=True)
   #credits
-  metadata['writer'] = parseMultiple(soup.find_all("h2", attrs={'title':'Written by'}))
-  metadata['penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Pencils'}))
-  metadata['inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Inks'}))
-  metadata['colorist'] = parseMultiple(soup.find_all("h2", attrs={'title':'Colored by'}))
-  metadata['coverArtist'] = parseMultiple(soup.find_all("h2", attrs={'title':'Cover by'}))
-  #is art by the same as penciller?
-  metadata['artist'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
+  metadata['Writer'] = parseMultiple(soup.find_all("h2", attrs={'title':'Written by'}))
+  metadata['Penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Pencils'}))
+  metadata['Inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Inks'}))
+  metadata['Colorist'] = parseMultiple(soup.find_all("h2", attrs={'title':'Colored by'}))
+  metadata['Cover'] = parseMultiple(soup.find_all("h2", attrs={'title':'Cover by'}))
+  #artist is the same as both Penciller and Inker according to ComicTagger
+  metadata['Penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
+  metadata['Inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
+
   metadata['genres'] = parseMultiple(soup.find_all('a', href=re.compile('comics-genre')))
 
   pageCount = soup.find("h4", text="Page Count").find_next_sibling().get_text(strip=True)
