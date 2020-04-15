@@ -42,6 +42,7 @@ def getComicArchive(filename):
 # mdOriginal = existing metadata in Comic archive
 # mdNew = newly scraped metadata
 def updateMetadata(mdOriginal, mdNew, style):
+    print('original data')
     print(mdOriginal)
 
     if cfg.overwrite:
@@ -53,9 +54,6 @@ def updateMetadata(mdOriginal, mdNew, style):
 
     print('merged data')
     print(mdUpdated)
-
-    #artist role will result in duplicates in inker and penciller if metadata exists
-    print(ComicInfoXml().stringFromMetadata(mdUpdated))
 
     #save metadata
     #if not ca.writeMetadata(mdUpdated, style):

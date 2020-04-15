@@ -8,7 +8,6 @@ from utils import getCMXIDFromString
 from mylar_utils import *
 
 def mapCMXtoMetadata(CMXData):
-    #TODO: configure which metadata to update, or maybe which to scrape, then update all in the metadata
     md = GenericMetadata()
     md.isEmpty = False
 
@@ -38,7 +37,7 @@ def mapCMXtoMetadata(CMXData):
 
     md.notes = CMXData.get('Notes', None)
 
-    print("mapped data")
+    print("mapped Comixology data")
     print(md)
 
     return md
@@ -46,8 +45,6 @@ def mapCMXtoMetadata(CMXData):
 def processArchive(ca, style):
     md = ca.readMetadata( style )
     print("{0} {1} #{2} ({3})".format(md.series, md.format, md.issue, md.volume))
-
-    print("Title={0}".format(md.title))
     print("Notes={0}".format(md.notes))
 
     #check for CMXDB in notes
