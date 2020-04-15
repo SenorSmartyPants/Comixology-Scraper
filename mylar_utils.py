@@ -45,6 +45,14 @@ def updateMetadata(mdOriginal, mdNew, style):
     print('original data')
     print(mdOriginal)
 
+    #special handling for Notes
+    #Add Comixology ID note if not present in the notes. Never overwrite notes
+    if mdOriginal.notes.find(mdNew.notes) == -1:
+        #no CMX ID in notes, append to notes
+        newNotes = mdOriginal.notes + '\n' + mdNew.notes
+    else:
+        newNotes = mdOriginal.notes
+
     if cfg.overwrite:
         mdOriginal.overlay(mdNew)
         mdUpdated = mdOriginal
@@ -52,6 +60,7 @@ def updateMetadata(mdOriginal, mdNew, style):
         mdNew.overlay(mdOriginal)
         mdUpdated = mdNew
 
+    mdUpdated.notes = newNotes
     print('merged data')
     print(mdUpdated)
 
