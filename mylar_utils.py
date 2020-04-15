@@ -1,4 +1,5 @@
 import sys
+import config as cfg
 
 #using hotio docker paths
 #something is weird with the path. Not finding the libs but this path is at the end of the path list
@@ -38,20 +39,26 @@ def getComicArchive(filename):
 
     return ca
 
-# mdKeep = this metadata will not be altered if it has a value
-# mdAdd = Non-null values will be added into mdKeep
-def updateMetadata(mdKeep, mdAdd, style):
-    print(mdKeep)
-    mdAdd.overlay(mdKeep)
+# mdOriginal = existing metadata in Comic archive
+# mdNew = newly scraped metadata
+def updateMetadata(mdOriginal, mdNew, style):
+    print(mdOriginal)
+
+    if cfg.overwrite:
+        mdOriginal.overlay(mdNew)
+        mdUpdated = mdOriginal
+    else:
+        mdNew.overlay(mdOriginal)
+        mdUpdated = mdNew
 
     print('merged data')
-    print(mdAdd)
+    print(mdUpdated)
 
     #artist role will result in duplicates in inker and penciller if metadata exists
-    print(ComicInfoXml().stringFromMetadata(mdAdd))
+    print(ComicInfoXml().stringFromMetadata(mdUpdated))
 
     #save metadata
-    #if not ca.writeMetadata(md, style):
+    #if not ca.writeMetadata(mdUpdated, style):
     #    print("The tag save seemed to fail!", file=sys.stderr)
     #    return False
     #else:
