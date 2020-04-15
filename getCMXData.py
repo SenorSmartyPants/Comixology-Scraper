@@ -4,6 +4,7 @@ from pprint import pprint
 from bs4 import BeautifulSoup 
 from datetime import datetime
 
+import config as cfg
 
 
 CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
@@ -30,46 +31,60 @@ def parseCMX(r, CMXID, debug = False):
 
     metadata = {}
 
-    #content from head
+    # region content from head
     titleVolumeAndIssue = soup.find("meta", attrs={'name':'twitter:title'})['content']
     match = re.search('(.*?)( \((\d{4})-\d{0,4}\))? #(.*?)( \(of \d\))?$', titleVolumeAndIssue)
     metadata['series'] = match.group(1)
     metadata['volume'] = match.group(3)
     metadata['issue'] = match.group(4)
 
-    metadata['description'] = soup.find("meta", attrs={'name':'description'})['content']
-    metadata['webLink'] = soup.find("meta", attrs={'name':'url'})['content']
-    metadata['coverURL'] = soup.find("meta", attrs={'name':'image'})['content']
+    if cfg.scrape['description']:
+        metadata['description'] = soup.find("meta", attrs={'name':'description'})['content']
+    if cfg.scrape['webLink']:
+        metadata['webLink'] = soup.find("meta", attrs={'name':'url'})['content']
+    if cfg.scrape['coverURL']:
+        metadata['coverURL'] = soup.find("meta", attrs={'name':'image'})['content']
+    # endregion
 
 
     #content from body
-    metadata['publisher'] = soup.find("h3", attrs={'title':'Publisher'}).get_text(strip=True)
-    #credits
-    metadata['Writer'] = parseMultiple(soup.find_all("h2", attrs={'title':'Written by'}))
-    metadata['Penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Pencils'}))
-    metadata['Inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Inks'}))
-    metadata['Colorist'] = parseMultiple(soup.find_all("h2", attrs={'title':'Colored by'}))
-    metadata['Cover'] = parseMultiple(soup.find_all("h2", attrs={'title':'Cover by'}))
-    #artist is the same as both Penciller and Inker according to ComicTagger
-    metadata['Penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
-    metadata['Inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
+    if cfg.scrape['publisher']:
+        metadata['publisher'] = soup.find("h3", attrs={'title':'Publisher'}).get_text(strip=True)
 
-    metadata['genres'] = parseMultiple(soup.find_all('a', href=re.compile('comics-genre')))
+    # region credits
+    if cfg.scrape['credits']:
+        metadata['Writer'] = parseMultiple(soup.find_all("h2", attrs={'title':'Written by'}))
+        metadata['Penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Pencils'}))
+        metadata['Inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Inks'}))
+        metadata['Colorist'] = parseMultiple(soup.find_all("h2", attrs={'title':'Colored by'}))
+        metadata['Cover'] = parseMultiple(soup.find_all("h2", attrs={'title':'Cover by'}))
+        #artist is the same as both Penciller and Inker according to ComicTagger
+        metadata['Penciller'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
+        metadata['Inker'] = parseMultiple(soup.find_all("h2", attrs={'title':'Art by'}))
+    # endregion
 
-    pageCount = soup.find("h4", text="Page Count").find_next_sibling().get_text(strip=True)
-    pages = re.search('(.*) Pages', pageCount).group(1)
-    metadata['pageCount'] = pages
+    if cfg.scrape['genres']:
+        metadata['genres'] = parseMultiple(soup.find_all('a', href=re.compile('comics-genre')))
 
-    releaseDateElement = soup.find("h4", text="Print Release Date")
-    if releaseDateElement is not None:
-        parseReleaseDate(releaseDateElement, metadata)
-    else:
-        releaseDateElement = soup.find("h4", text="Digital Release Date")
-        parseReleaseDate(releaseDateElement, metadata)
+    if cfg.scrape['pageCount']:
+        pageCount = soup.find("h4", text="Page Count").find_next_sibling().get_text(strip=True)
+        pages = re.search('(.*) Pages', pageCount).group(1)
+        metadata['pageCount'] = pages
 
-    metadata['Notes'] = "Tagged with Comixology-Scraper on {0}. [CMXDB{1}]".format(
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        CMXID)
+    # region Release Date
+    if cfg.scrape['releaseDate']:
+        releaseDateElement = soup.find("h4", text="Print Release Date")
+        if releaseDateElement is not None:
+            parseReleaseDate(releaseDateElement, metadata)
+        else:
+            releaseDateElement = soup.find("h4", text="Digital Release Date")
+            parseReleaseDate(releaseDateElement, metadata)
+    # endregion
+
+    if cfg.scrape['Notes']:
+        metadata['Notes'] = "Tagged with Comixology-Scraper on {0}. [CMXDB{1}]".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            CMXID)
 
     if debug:
         pprint(metadata)
