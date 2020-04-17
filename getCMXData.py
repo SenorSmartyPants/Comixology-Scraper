@@ -1,7 +1,10 @@
 from scraping import *
 import re
-from pprint import pprint 
-from datetime import datetime
+try:
+    from pprint import pprint
+except ImportError:
+    pprint = print
+import time
 
 import config as cfg
 
@@ -14,10 +17,10 @@ def buildComixologyURL(CMXID):
 def parseReleaseDate(releaseDateElement, metadata):
     if releaseDateElement is not None:
         releaseDateStr = getText(getNextSibling(releaseDateElement))
-        releaseDate = datetime.strptime(releaseDateStr, '%B %d %Y')
-        metadata['Year'] = releaseDate.year
-        metadata['Month'] = releaseDate.month
-        metadata['Day'] = releaseDate.day
+        releaseDate = time.strptime(releaseDateStr, '%B %d %Y')
+        metadata['Year'] = releaseDate[0]
+        metadata['Month'] = releaseDate[1]
+        metadata['Day'] = releaseDate[2]
 
 def parseMultiple(soup):
     items = []
