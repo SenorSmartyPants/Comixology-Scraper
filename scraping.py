@@ -39,5 +39,6 @@ def getNextSibling(element):
 
 # endregion
 
+#return beautifulsoup or htmlDoc
 def fetchWebPage(URL):
-    return requests.get(URL)
+    return BeautifulSoup(requests.get(URL).content, 'html.parser')

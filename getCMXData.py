@@ -24,12 +24,13 @@ def parseReleaseDate(releaseDateElement, metadata):
 
 def parseMultiple(soup):
     items = []
-    for item in soup:
-        items.append(getText(item))
+    if soup is not None:
+        for item in soup:
+            items.append(getText(item))
     return items
 
-def parseCMX(r, CMXID, debug = False):
-    soup = BeautifulSoup(r.content, 'html.parser')
+def parseCMX(CMXID, debug = False):
+    soup = fetchWebPage(buildComixologyURL(CMXID))
 
     metadata = {}
 
@@ -96,4 +97,4 @@ def parseCMX(r, CMXID, debug = False):
     return metadata
 
 def byCMXID(CMXID, debug = False):
-    return parseCMX(fetchWebPage(buildComixologyURL(CMXID)), CMXID, debug)
+    return parseCMX(CMXID, debug)
