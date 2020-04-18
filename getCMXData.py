@@ -3,7 +3,8 @@ import re
 try:
     from pprint import pprint
 except ImportError:
-    pprint = print
+    def pprint(x):
+        print(x)
 import time
 
 import config as cfg
