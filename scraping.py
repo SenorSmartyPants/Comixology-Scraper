@@ -1,52 +1,62 @@
-# beautifulSoup
+# HTMLAgility and Xpath syntax
+import sys
+import clr
+clr.AddReference('HtmlAgilityPack') 
 
-import re
-import requests 
-from bs4 import BeautifulSoup 
+from HtmlAgilityPack import HtmlWeb
+from HtmlAgilityPack import HtmlDocument
+
+clr.AddReference('System.Web')
+from System.Web import HttpUtility
+# for HTMLdecode
+
+import System
+import System.Text
+# this handles unicode encoding:
+bodyname = System.Text.Encoding.Default.BodyName
+sys.setdefaultencoding(bodyname)
 
 # region Parsing helper functions
 def constructFilter(name, value, substring):
-    filter = None
-    if name is not None:
-        if substring:
-            filter={name: re.compile(value)}
-        else:
-            filter={name: value}
+    if substring:
+        filter = "contains({0}, '{1}')".format(name, value)
+    else:
+        filter = "{0}='{1}'".format(name, value)
     return filter
 
+def constructSelector(elementName, filterAttr = None, filterAttrValue = None, text = None, substring = False):
+    xpath = "//" + elementName
+    if filterAttr is not None or text is not None:
+        xpath += "["
+    if filterAttr is not None:
+        xpath += constructFilter('@' + filterAttr, filterAttrValue, substring)
+    if filterAttr is not None and text is not None:
+        xpath += " and "        
+    if text is not None:
+        xpath += constructFilter('text()', text, substring)
+    if filterAttr is not None or text is not None:
+        xpath += "]"
+    return xpath
+
 def findElement(soup, elementName, filterAttr = None, filterAttrValue = None, text = None, substring = False):
-    attrs = constructFilter(filterAttr, filterAttrValue, substring)
-    if attrs is None:
-        return soup.find(elementName, text=text)
-    else:
-        return soup.find(elementName, attrs=attrs, text=text)
+    xpath = constructSelector(elementName, filterAttr, filterAttrValue, text, substring)
+    return soup.DocumentNode.SelectSingleNode(xpath)
 
 def findElements(soup, elementName, filterAttr = None, filterAttrValue = None, text = None, substring = False):
-    attrs = constructFilter(filterAttr, filterAttrValue, substring)
-    if attrs is None:
-        return soup.find_all(elementName, text=text)
-    else:
-        return soup.find_all(elementName, attrs=attrs, text=text)
+    xpath = constructSelector(elementName, filterAttr, filterAttrValue, text, substring)
+    return soup.DocumentNode.SelectNodes(xpath)
 
 def getText(element):
-    return element.get_text(strip=True)
+    return unicode(HttpUtility.HtmlDecode((element.InnerText.strip())))
 
 def findAttributeValue(element, targetAttr):
-    return element[targetAttr]    
+    return unicode(HttpUtility.HtmlDecode(element.Attributes[targetAttr].Value))
 
 def getNextSibling(element):
-    return element.find_next_sibling()
+    return element.SelectSingleNode("following-sibling::*")
 
 # endregion
 
 #return beautifulsoup or htmlDoc
 def fetchWebPage(URL):
-    if URL:
-        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,'referer':'https://www.google.com/'}
-        response = requests.get(URL, headers=headers)
-
-        if response.status_code == 200:
-            return BeautifulSoup(response.content, 'html.parser')
-        else:
-            print('http status code = {0}'.format(response.status_code))
-            return None
+    return HtmlWeb().Load(URL)
