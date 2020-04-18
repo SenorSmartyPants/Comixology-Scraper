@@ -28,7 +28,12 @@ def parseMultiple(soup):
     if soup is not None:
         for item in soup:
             items.append(getText(item))
-    return items
+    if len(items) > 0:
+        return items
+
+def appendIfNotNone(list, key, value):
+    if value is not None:
+        list[key] = value
 
 def parseCMX(CMXID, debug = False):
     soup = fetchWebPage(buildComixologyURL(CMXID))
@@ -41,7 +46,7 @@ def parseCMX(CMXID, debug = False):
     if cfg.scrape['series']:
         metadata['series'] = match.group(1)
     if cfg.scrape['volume']:
-        metadata['volume'] = match.group(3)
+        appendIfNotNone(metadata, 'volume', match.group(3))
     if cfg.scrape['issue']:
         metadata['issue'] = match.group(4)
 
@@ -56,23 +61,23 @@ def parseCMX(CMXID, debug = False):
 
     #content from body
     if cfg.scrape['publisher']:
-        metadata['publisher'] = getText(findElement(soup, 'h3', 'title', 'Publisher'))
+        appendIfNotNone(metadata, 'publisher', getText(findElement(soup, 'h3', 'title', 'Publisher')))
 
     # region credits
     if cfg.scrape['credits']:
-        metadata['Writer'] = parseMultiple(findElements(soup, 'h2', 'title', 'Written by'))
-        metadata['Penciller'] = parseMultiple(findElements(soup, 'h2', 'title', 'Pencils'))
-        metadata['Inker'] = parseMultiple(findElements(soup, 'h2', 'title', 'Inks'))
-        metadata['Colorist'] = parseMultiple(findElements(soup, 'h2', 'title', 'Colored by'))
-        metadata['Cover'] = parseMultiple(findElements(soup, 'h2', 'title', 'Cover by'))
+        appendIfNotNone(metadata, 'Writer', parseMultiple(findElements(soup, 'h2', 'title', 'Written by')))
+        appendIfNotNone(metadata, 'Penciller', parseMultiple(findElements(soup, 'h2', 'title', 'Pencils')))
+        appendIfNotNone(metadata, 'Inker', parseMultiple(findElements(soup, 'h2', 'title', 'Inks')))
+        appendIfNotNone(metadata, 'Colorist', parseMultiple(findElements(soup, 'h2', 'title', 'Colored by')))
+        appendIfNotNone(metadata, 'Cover', parseMultiple(findElements(soup, 'h2', 'title', 'Cover by')))
         #artist is the same as both Penciller and Inker according to ComicTagger
-        artists = findElements(soup, 'h2', 'title', 'Art by')
-        metadata['Penciller'] = parseMultiple(artists)
-        metadata['Inker'] = parseMultiple(artists)
+        artists = parseMultiple(findElements(soup, 'h2', 'title', 'Art by'))
+        appendIfNotNone(metadata, 'Penciller', artists)
+        appendIfNotNone(metadata, 'Inker', artists)
     # endregion
 
     if cfg.scrape['genres']:
-        metadata['genres'] = parseMultiple(findElements(soup, 'a', 'href', 'comics-genre', substring=True))
+        appendIfNotNone(metadata, 'genres', parseMultiple(findElements(soup, 'a', 'href', 'comics-genre', substring=True)))
 
     if cfg.scrape['pageCount']:
         pageCount = getText(getNextSibling(findElement(soup, 'h4', text='Page Count')))
