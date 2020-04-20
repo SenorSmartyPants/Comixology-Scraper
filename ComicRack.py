@@ -43,7 +43,17 @@ def split(s):
     return s.split(",") if s else [] 
 
 def verifyMatch(book, CMXData):
-    return book.Series == CMXData['series'] and book.Number == CMXData['issue'] and book.ReleasedTime.Year == CMXData['Year'] and book.ReleasedTime.Month == CMXData['Month']    
+    print("Verifying match... existing data -> Comixology data")
+    seriesEqual = book.Series == CMXData['series']
+    numberEqual = book.Number == CMXData['issue']
+    yearEqual = book.ReleasedTime.Year == CMXData['Year']
+    monthEqual = book.ReleasedTime.Month == CMXData['Month']
+    print("Series {0} {2} {1}".format(book.Series, CMXData['series'], '==' if seriesEqual else '!='))
+    print("Number {0} {2} {1}".format(book.Number, CMXData['issue'], '==' if numberEqual else '!='))
+    print("Year {0} {2} {1}".format(book.ReleasedTime.Year, CMXData['Year'], '==' if yearEqual else '!='))
+    print("Month {0} {2} {1}".format(book.ReleasedTime.Month, CMXData['Month'], '==' if monthEqual else '!='))
+
+    return seriesEqual and numberEqual and yearEqual and monthEqual    
 
 def overwritable(prop):
     if type(prop) is str:
