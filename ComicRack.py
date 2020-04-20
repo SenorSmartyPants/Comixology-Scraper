@@ -2,6 +2,10 @@ from utils import *
 from System import DateTime
 from System.IO import Path
 
+import clr
+clr.AddReference("System.Windows.Forms")
+from System.Windows.Forms import *
+
 import getCMXData
 import config as cfg
 
@@ -13,28 +17,33 @@ def ComixologyScraper(books):
     booksNotMatched = 0
 
     for book in books:
-        IDinCA = False
+        print("======> Scraping {0}".format(Path.GetFileName(book.FilePath)))
+        
         CMXData = None
         CMXID = getCMXIDFromString(book.Notes)
 
-        print("======> Scraping {0}".format(Path.GetFileName(book.FilePath)))
         if CMXID is not None:
+            print("CMXID in notes = {0}".format(CMXID))
             IDinCA = True
-            CMXData = getCMXData.byCMXID(CMXID, True)
+        else:
+            IDinCA = False
 
         if CMXID is not None:
-            if CMXData is not None and (IDinCA or verifyMatch(book, CMXData)):
+            CMXData = getCMXData.byCMXID(CMXID, True)
+            if IDinCA or verifyMatch(book, CMXData):
                 booksProcessed += 1
                 updateMetadata(book, CMXData)
             else:
                 booksNotMatched += 1
                 print('Not a close enough match')
         else:
+            booksNotMatched += 1
             print('Could not find Comixology ID in Notes or via google')
         
         print('')
 
     print "Comixology Scraper finished (scraped {0}, skipped {1}).".format(booksProcessed, booksNotMatched)
+    MessageBox.Show("Comixology Scraper finished (scraped {0}, skipped {1}).".format(booksProcessed, booksNotMatched), "Comixology Scraper", MessageBoxButtons.OK)
             
 
 #function copied from CVS - ComicVine Scraper
