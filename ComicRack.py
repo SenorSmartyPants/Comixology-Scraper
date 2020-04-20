@@ -25,7 +25,7 @@ def ComixologyScraper(books):
         if CMXID is not None:
             if CMXData is not None and (IDinCA or verifyMatch(book, CMXData)):
                 booksProcessed += 1
-                mapCMXtoMetadata(CMXData, book, book)
+                updateMetadata(book, CMXData)
             else:
                 booksNotMatched += 1
                 print('Not a close enough match')
@@ -55,47 +55,49 @@ def overwritable(prop):
     else:
         return cfg.overwrite or prop is None
 
-def mapCMXtoMetadata(CMXData, md, book):
-    if overwritable(md.Series):
-        md.Series = CMXData.get('series', md.Series)
+def updateMetadata(book, CMXData):
+    if overwritable(book.Series):
+        book.Series = CMXData.get('series', book.Series)
     
-    if overwritable(md.Volume):
-        md.Volume = CMXData.get('volume', md.Volume)
+    if overwritable(book.Volume):
+        book.Volume = CMXData.get('volume', book.Volume)
     
-    if overwritable(md.Number):
-        md.Number = CMXData.get('issue', md.Number)
+    if overwritable(book.Number):
+        book.Number = CMXData.get('issue', book.Number)
 
-    if overwritable(md.Summary):
-        md.Summary = CMXData.get('description', md.Summary)
-    if overwritable(md.Web):
-        md.Web = CMXData.get('webLink', md.Web)
+    if overwritable(book.Summary):
+        book.Summary = CMXData.get('description', book.Summary)
+    if overwritable(book.Web):
+        book.Web = CMXData.get('webLink', book.Web)
 
-    if overwritable(md.Publisher):
-        md.Publisher = CMXData.get('publisher', md.Publisher)
+    if overwritable(book.Publisher):
+        book.Publisher = CMXData.get('publisher', book.Publisher)
 
     #credits - extra work with the split and join
-    if overwritable(md.Writer):
-        md.Writer = ', '.join(CMXData.get('Writer', split(md.Writer)))
-    if overwritable(md.Penciller):
-        md.Penciller = ', '.join(CMXData.get('Penciller', split(md.Penciller)))
-    if overwritable(md.Inker):
-        md.Inker = ', '.join(CMXData.get('Inker', split(md.Inker)))
-    if overwritable(md.Colorist):
-        md.Colorist = ', '.join(CMXData.get('Colorist', split(md.Colorist)))
-    if overwritable(md.CoverArtist):
-        md.CoverArtist = ', '.join(CMXData.get('Cover', split(md.CoverArtist)))
+    if overwritable(book.Writer):
+        book.Writer = ', '.join(CMXData.get('Writer', split(book.Writer)))
+    if overwritable(book.Penciller):
+        book.Penciller = ', '.join(CMXData.get('Penciller', split(book.Penciller)))
+    if overwritable(book.Inker):
+        book.Inker = ', '.join(CMXData.get('Inker', split(book.Inker)))
+    if overwritable(book.Colorist):
+        book.Colorist = ', '.join(CMXData.get('Colorist', split(book.Colorist)))
+    if overwritable(book.CoverArtist):
+        book.CoverArtist = ', '.join(CMXData.get('Cover', split(book.CoverArtist)))
 
-    if overwritable(md.Genre):
-        md.Genre = ', '.join(CMXData.get('genres', split(md.Genre)))
+    if overwritable(book.Genre):
+        book.Genre = ', '.join(CMXData.get('genres', split(book.Genre)))
 
     #released date - datetime
-    if overwritable(md.ReleasedTime):
-        md.ReleasedTime = DateTime(CMXData.get('Year', md.ReleasedTime.Year), 
-            CMXData.get('Month', md.ReleasedTime.Month), 
-            CMXData.get('Day', md.ReleasedTime.Day))
+    if overwritable(book.ReleasedTime):
+        book.ReleasedTime = DateTime(CMXData.get('Year', book.ReleasedTime.Year), 
+            CMXData.get('Month', book.ReleasedTime.Month), 
+            CMXData.get('Day', book.ReleasedTime.Day))
 
     #special handling for Notes
     #Add Comixology ID note if not present in the notes. Never overwrite notes
-    if md.Notes.find(CMXData['Notes']) == -1:
+    if book.Notes.find(CMXData['Notes']) == -1:
         #no CMX ID in notes, append to notes
-        md.Notes = CMXData['Notes']
+        if len(book.Notes) > 0:
+            book.Notes += "\n"
+        book.Notes += CMXData['Notes']
