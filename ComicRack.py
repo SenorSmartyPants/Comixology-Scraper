@@ -1,5 +1,7 @@
 from utils import *
 from System import DateTime
+from System.IO import Path
+
 import getCMXData
 import config as cfg
 
@@ -7,20 +9,32 @@ import config as cfg
 #@Hook	Books
 #@Description Scrape Comixology website for metadata
 def ComixologyScraper(books):
+    booksProcessed = 0
+    booksNotMatched = 0
+
     for book in books:
-        print book.Series
-        print book.Notes
+        IDinCA = False
+        CMXData = None
         CMXID = getCMXIDFromString(book.Notes)
 
+        print("======> Scraping {0}".format(Path.GetFileName(book.FilePath)))
         if CMXID is not None:
             IDinCA = True
             CMXData = getCMXData.byCMXID(CMXID, True)
 
-        if IDinCA or verifyMatch(book, CMXData):
-            mapCMXtoMetadata(CMXData, book, book)
+        if CMXID is not None:
+            if CMXData is not None and (IDinCA or verifyMatch(book, CMXData)):
+                booksProcessed += 1
+                mapCMXtoMetadata(CMXData, book, book)
+            else:
+                booksNotMatched += 1
+                print('Not a close enough match')
         else:
-            print('Not a close enough match')
+            print('Could not find Comixology ID in Notes or via google')
+        
+        print('')
 
+    print "Comixology Scraper finished (scraped {0}, skipped {1}).".format(booksProcessed, booksNotMatched)
             
 
 #function copied from CVS - ComicVine Scraper
@@ -40,7 +54,6 @@ def overwritable(prop):
         return cfg.overwrite or prop == DateTime.MinValue       
     else:
         return cfg.overwrite or prop is None
-
 
 def mapCMXtoMetadata(CMXData, md, book):
     if overwritable(md.Series):
@@ -74,8 +87,6 @@ def mapCMXtoMetadata(CMXData, md, book):
 
     if overwritable(md.Genre):
         md.Genre = ', '.join(CMXData.get('genres', split(md.Genre)))
-
-    print('after multiples')
 
     #released date - datetime
     if overwritable(md.ReleasedTime):
