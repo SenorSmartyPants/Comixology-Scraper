@@ -28,5 +28,24 @@ def findCMXID(series, volume, issue, format, debug = False):
         #try without volume, if one was passed in
         if debug:
             print("Trying without volume")
-        CMXID = googleSeries(series, "", issue, format, debug)
+        CMXID = googleSeries(series, '', issue, format, debug)
+
+    if CMXID is None and series[0:4] == 'The ':
+        #try removing leading The
+        if debug:
+            print("Removing leading 'The '")
+        CMXID = googleSeries(series.replace('The ', '', 1), volume, issue, format, debug)
+        
+    if CMXID is None and issue == '1':
+        #graphic novels, some one-shots don't have a number on CMX
+        if debug:
+            print("Trying without issue number")
+        CMXID = googleSeries(series, volume, '', format, debug)
+
+    if CMXID is None and issue == '1':
+        #graphic novels, some one-shots don't have a number on CMX
+        if debug:
+            print("Trying without issue number and without volume")
+        CMXID = googleSeries(series, '', '', format, debug)        
+
     return CMXID
