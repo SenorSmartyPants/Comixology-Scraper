@@ -58,16 +58,21 @@ def split(s):
 
 def verifyMatch(book, CMXData):
     print("Verifying match... existing data -> Comixology data")
-    seriesEqual = book.Series == CMXData['series']
-    numberEqual = book.Number == CMXData['issue']
+    seriesEqual = book.Series.lower() == CMXData['series'].lower()
+    seriesEqualNoThe = book.Series.replace('The ', '', 1).lower() == CMXData['series'].replace('The ', '', 1).lower()
+    numberEqual = book.Number.lower() == CMXData['issue'].lower()
+    #or number is 1 and issue is empty
+    numberEqual2 = (book.Number == '1' and CMXData['issue'] == '')
     yearEqual = book.ReleasedTime.Year == CMXData['Year']
     monthEqual = book.ReleasedTime.Month == CMXData['Month']
     print("Series {0} {2} {1}".format(book.Series, CMXData['series'], '==' if seriesEqual else '!='))
+    print("Series 'The' removed  {0} {2} {1}".format(book.Series, CMXData['series'], '==' if seriesEqualNoThe else '!='))
     print("Number {0} {2} {1}".format(book.Number, CMXData['issue'], '==' if numberEqual else '!='))
+    print("Number test 2 (1 == empty) {0} {2} {1}".format(book.Number, CMXData['issue'], '==' if numberEqual2 else '!='))
     print("Year {0} {2} {1}".format(book.ReleasedTime.Year, CMXData['Year'], '==' if yearEqual else '!='))
     print("Month {0} {2} {1}".format(book.ReleasedTime.Month, CMXData['Month'], '==' if monthEqual else '!='))
 
-    return seriesEqual and numberEqual and yearEqual and monthEqual    
+    return (seriesEqual or seriesEqualNoThe) and (numberEqual or numberEqual2) and yearEqual and monthEqual    
 
 def overwritable(prop):
     if type(prop) is str:
