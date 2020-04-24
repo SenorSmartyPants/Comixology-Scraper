@@ -42,16 +42,26 @@ def parseCMX(CMXID, debug = False):
 
     # region content from head
     titleVolumeAndIssue = findAttributeValue(findElement(soup, "meta", 'name', 'twitter:title'),'content')
+    print(titleVolumeAndIssue)
     match = re.search('(.*?)( \((\d{4})-?\d{0,4}\))? ?(Annual)? #(.*?)( \(of (\d{1,2})\))?$', titleVolumeAndIssue)    
-    if cfg.scrape['series']:
-        metadata['series'] = match.group(1)
-    if cfg.scrape['volume']:
-        appendIfNotNone(metadata, 'volume', match.group(3))
-    if cfg.scrape['issue']:
-        metadata['issue'] = match.group(5)
+    if match is not None:
+        #use the whole string, assuming just series for the moment
+        if cfg.scrape['series']:
+            metadata['series'] = match.group(1)
+        if cfg.scrape['volume']:
+            appendIfNotNone(metadata, 'volume', match.group(3))
+        # issue not always present. OGN or one-shots
+        if cfg.scrape['issue']:
+            appendIfNotNone(metadata, 'issue', match.group(5))
 
-    metadata['format'] = match.group(4) # currently just Annual observered in CMX data
-    metadata['ofcount'] = match.group(7) 
+        metadata['format'] = match.group(4) # currently just Annual observered in CMX data
+        metadata['ofcount'] = match.group(7) 
+    else:
+        if cfg.scrape['series']:
+            metadata['series'] = titleVolumeAndIssue
+        if cfg.scrape['issue']:
+            metadata['issue'] = ''
+
 
     if cfg.scrape['description']:
         metadata['description'] = findAttributeValue(findElement(soup, 'meta', 'name', 'description'), 'content')
