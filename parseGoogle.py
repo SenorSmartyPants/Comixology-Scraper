@@ -1,18 +1,16 @@
 import re
-import requests 
-from bs4 import BeautifulSoup 
+from scraping import *
 
 def parseGoogleResult(URL, debug = False):
-    r = requests.get(URL)
-    soup = BeautifulSoup(r.content, 'html.parser')
+    soup = fetchWebPage(URL)
     #should be first result - if found
     aResult = soup.find('a', href=re.compile('url\?q=https:\/\/(www|m).comixology.com'))
 
     if aResult:
-        matchCMXURL = re.search('url\?q=(.+?)[&?%]', aResult['href'])
+        matchCMXURL = re.search('url\?q=(.+?)[&?%]', findAttributeValue(aResult, 'href'))
         CMXURL = matchCMXURL.group(1)
         if debug:
-            print(CMXURL) 
+            print("URL = " + CMXURL) 
 
         matchCMXID = re.search('\/([0-9]+)$', CMXURL)
         CMXID = matchCMXID.group(1)
