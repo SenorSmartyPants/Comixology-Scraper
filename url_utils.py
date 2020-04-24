@@ -1,4 +1,6 @@
-import urllib.parse
+import clr
+clr.AddReference('System.Web')
+from System.Web import HttpUtility
 
 def UrlPathEncode(string):
-    return urllib.parse.quote(string)
+    return HttpUtility.UrlEncode(string)
