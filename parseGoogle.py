@@ -12,7 +12,7 @@ def parseGoogleResult(URL, debug = False):
         if debug:
             print("URL = " + CMXURL) 
 
-        matchCMXID = re.search('\/([0-9]+)$', CMXURL)
+        matchCMXID = re.search('\/([0-9]+)\??.*$', CMXURL)
         CMXID = matchCMXID.group(1)
         if debug:
             print(CMXID)
