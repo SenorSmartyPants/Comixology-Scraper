@@ -8,6 +8,7 @@ from System.Windows.Forms import *
 
 import getCMXData
 import config as cfg
+import google
 
 #@Name	Comixology Scraper
 #@Hook	Books
@@ -27,6 +28,10 @@ def ComixologyScraper(books):
             IDinCA = True
         else:
             IDinCA = False
+
+        if CMXID is None:
+            CMXID = google.findCMXID(book.Series, book.Volume, book.Number, book.Format, True)
+            print("CMXID google result = {0}".format(CMXID))              
 
         if CMXID is not None:
             CMXData = getCMXData.byCMXID(CMXID, True)
