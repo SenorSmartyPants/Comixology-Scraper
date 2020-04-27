@@ -15,7 +15,7 @@ def parseGoogleResult(URL, debug = False):
         matchCMXID = re.search('\/([0-9]+)\??.*$', CMXURL)
         CMXID = matchCMXID.group(1)
         if debug:
-            print(CMXID)
+            print("CMXID google result = {0}".format(CMXID))  
 
         return CMXID
     else:
