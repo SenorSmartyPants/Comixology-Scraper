@@ -32,7 +32,6 @@ def ComixologyScraper(books):
 
         if CMXID is None:
             CMXID = google.findCMXID(book.Series, book.Volume, book.Number, book.Format, True)
-            print("CMXID google result = {0}".format(CMXID))              
 
         if CMXID is not None:
             CMXData = getCMXData.byCMXID(CMXID, True)
@@ -125,6 +124,14 @@ def updateMetadata(book, CMXData):
         book.ReleasedTime = DateTime(CMXData.get('Year', book.ReleasedTime.Year), 
             CMXData.get('Month', book.ReleasedTime.Month), 
             CMXData.get('Day', book.ReleasedTime.Day))
+
+    #star Rating
+    if overwritable(book.CommunityRating):
+        book.CommunityRating = CMXData.get('starRating', book.CommunityRating)
+
+    #age Rating
+    if overwritable(book.AgeRating):
+        book.AgeRating = CMXData.get('ageRating', book.AgeRating)        
 
     #special handling for Notes
     #Add Comixology ID note if not present in the notes. Never overwrite notes
