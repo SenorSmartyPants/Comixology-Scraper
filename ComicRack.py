@@ -80,6 +80,8 @@ def overwritable(prop):
         return cfg.overwrite or len(prop) == 0
     elif type(prop) is int:
          return cfg.overwrite or prop == -1    
+    elif type(prop).__name__ == 'Single':
+         return cfg.overwrite or prop == 0
     elif type(prop) is DateTime:
         return cfg.overwrite or prop == DateTime.MinValue       
     else:
