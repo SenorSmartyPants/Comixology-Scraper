@@ -10,6 +10,9 @@ scrape = {
     'genres': True,
     'pageCount': True,
     'releaseDate':  True, #Year, Month, Day
+    'ageRating': True,
+    'starRating': True,
+    'starRatingMinCount': 10,
 }
 
 # overwrite existing non-null data?
