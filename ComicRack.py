@@ -13,6 +13,7 @@ import google
 #@Name	Comixology Scraper
 #@Hook	Books
 #@Description Scrape Comixology website for metadata
+#@Image Comixology.ico
 def ComixologyScraper(books):
     booksProcessed = 0
     booksNotMatched = 0
