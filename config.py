@@ -10,6 +10,7 @@ scrape = {
     'genres': True,
     'pageCount': True,
     'releaseDate':  True, #Year, Month, Day
+    'price': True,
     'ageRating': True,
     'starRating': True,
     'starRatingMinCount': 10,

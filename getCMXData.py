@@ -72,7 +72,7 @@ def parseCMX(CMXID, debug = False):
     # endregion
 
 
-    #content from body
+    # region content from body
     if cfg.scrape['publisher']:
         appendIfNotNone(metadata, 'publisher', getText(findElement(soup, 'h3', 'title', 'Publisher')))
 
@@ -105,6 +105,7 @@ def parseCMX(CMXID, debug = False):
         else:
             releaseDateElement = findElement(soup, 'h4', text='Digital Release Date')
             parseReleaseDate(releaseDateElement, metadata)
+    # endregion
 
     if cfg.scrape['starRating']:
         # only include starRating in output if there at least starRatingMinCount reviews
@@ -116,6 +117,18 @@ def parseCMX(CMXID, debug = False):
 
     if cfg.scrape['ageRating']:
         appendIfNotNone(metadata, 'ageRating', getText(getNextSibling(findElement(soup, 'h4', text='Age Rating'))))
+
+    # region price
+    if cfg.scrape['price']:
+        # find detail pricing block, so we don't get other offers accidentally
+        detailDiv = findElement(soup, 'div', 'data-item-actions-context', 'detail')
+        # check for full price first, if item is on sale
+        priceElement = findElement(detailDiv, 'h6', 'class', 'item-full-price', substring=True)
+        if priceElement is None:
+            priceElement = findElement(detailDiv, 'h5', 'class', 'item-price', substring=True)
+        appendIfNotNone(metadata, 'price', getText(priceElement).replace('$',''))
+    # endregion
+
     # endregion
 
     metadata['Notes'] = "Scraped metadata from Comixology [CMXDB{0}]".format(
