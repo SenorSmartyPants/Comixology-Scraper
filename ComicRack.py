@@ -80,7 +80,7 @@ def overwritable(prop):
     elif type(prop) is int:
          return cfg.overwrite or prop == -1    
     elif type(prop).__name__ == 'Single':
-         return cfg.overwrite or prop == 0
+         return cfg.overwrite or prop == 0 or prop == -1
     elif type(prop) is DateTime:
         return cfg.overwrite or prop == DateTime.MinValue       
     else:
@@ -132,6 +132,9 @@ def updateMetadata(book, CMXData):
     #age Rating
     if overwritable(book.AgeRating):
         book.AgeRating = CMXData.get('ageRating', book.AgeRating)        
+
+    if overwritable(book.BookPrice):
+        book.BookPrice = float(CMXData.get('price', book.BookPriceAsText))
 
     #special handling for Notes
     #Add Comixology ID note if not present in the notes. Never overwrite notes
