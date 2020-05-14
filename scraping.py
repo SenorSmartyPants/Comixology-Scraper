@@ -25,7 +25,7 @@ def constructFilter(name, value, substring):
     return filter
 
 def constructSelector(elementName, filterAttr = None, filterAttrValue = None, text = None, substring = False):
-    xpath = "//" + elementName
+    xpath = ".//" + elementName
     if filterAttr is not None or text is not None:
         xpath += "["
     if filterAttr is not None:
@@ -40,11 +40,17 @@ def constructSelector(elementName, filterAttr = None, filterAttrValue = None, te
 
 def findElement(soup, elementName, filterAttr = None, filterAttrValue = None, text = None, substring = False):
     xpath = constructSelector(elementName, filterAttr, filterAttrValue, text, substring)
-    return soup.DocumentNode.SelectSingleNode(xpath)
+    if type(soup).__name__ == 'HtmlNode':
+        return soup.SelectSingleNode(xpath)
+    else:
+        return soup.DocumentNode.SelectSingleNode(xpath)
 
 def findElements(soup, elementName, filterAttr = None, filterAttrValue = None, text = None, substring = False):
     xpath = constructSelector(elementName, filterAttr, filterAttrValue, text, substring)
-    return soup.DocumentNode.SelectNodes(xpath)
+    if type(soup).__name__ == 'HtmlNode':
+        return soup.SelectNodes(xpath)
+    else:
+        return soup.DocumentNode.SelectNodes(xpath)
 
 def getText(element):
     return unicode(HttpUtility.HtmlDecode((element.InnerText.strip())))
