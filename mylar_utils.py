@@ -1,6 +1,8 @@
 import sys
 import config as cfg
 
+from datetime import date
+
 #using hotio docker paths
 #something is weird with the path. Not finding the libs but this path is at the end of the path list
 #insert into the start of path and then script works
@@ -40,7 +42,33 @@ def getComicArchive(filename):
     return ca
 
 def verifyMatch(mdOriginal, mdNew):
-    return mdOriginal.series == mdNew.series and mdOriginal.issue == mdNew.issue and mdOriginal.year == mdNew.year and mdOriginal.month == mdNew.month
+    print("Verifying match... existing data -> Comixology data")
+    seriesEqual = mdOriginal.series.lower() == mdNew.series.lower()
+    seriesEqualNoThe = mdOriginal.series.replace('The ', '', 1).lower() == mdNew.series.replace('The ', '', 1).lower()
+    numberEqual = mdOriginal.issue == mdNew.issue
+    #or number is 1 and issue is empty
+    numberEqual2 = (int(mdOriginal.issue) == 1 and mdNew.issue == '')
+
+    print("Series {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqual else '!='))
+    if not seriesEqual:
+    	print("Series 'The' removed  {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqualNoThe else '!='))
+    
+    print("Number {0} {2} {1}".format(mdOriginal.issue, mdNew.issue, '==' if numberEqual else '!='))
+    if not numberEqual:
+    	print("Number test 2 (1 == empty) {0} {2} {1}".format(mdOriginal.issue, mdNew.issue, '==' if numberEqual2 else '!='))
+
+    # year and month need an allowable range parameter to fuzzy match 
+    # when cover date (which is the date comictagger/comicvine saves) 
+    # does not match in store date (which is what comixology provides)
+    daysDifferenceTolerance = 67
+
+    originalDate = date(int(mdOriginal.year), int(mdOriginal.month), int(mdOriginal.day))
+    newDate = date(mdNew.year, mdNew.month, mdNew.day)
+    datediff = abs((newDate - originalDate).days)
+    dateEqual = (datediff <= daysDifferenceTolerance)
+    print("Dates {0} and {1}({2}) {3} within {4} days".format(originalDate, newDate, datediff, '==' if dateEqual else '!=', daysDifferenceTolerance))
+
+    return (seriesEqual or seriesEqualNoThe) and (numberEqual or numberEqual2) and dateEqual
 
 # mdOriginal = existing metadata in Comic archive
 # mdNew = newly scraped metadata

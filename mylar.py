@@ -66,6 +66,7 @@ def processArchive(ca, style):
         mdCMX = mapCMXtoMetadata(CMXData)
         
         if IDinCA or verifyMatch(md, mdCMX):
+            print('matched to Comixology')
             updateMetadata(md, mdCMX, ca, style)
         else:
             print('Not a close enough match')
