@@ -23,7 +23,7 @@ def getFilename():
     return filename
 
 def getComicArchive(filename):
-    settings = ComicTaggerSettings()
+    settings = ComicTaggerSettings('/config/app/.ComicTagger')
 
     #image path needed to start ComicArchive, not sure why.
     #default image path is null in settings
