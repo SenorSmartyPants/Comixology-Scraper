@@ -24,6 +24,13 @@ def googleSeries(series, volume, issue, format, debug = False):
 
 def findCMXID(series, volume, issue, format, debug = False):
     CMXID = googleSeries(series, volume, issue, format, debug)
+
+    if CMXID is None and ' Annual' in series:
+        #check for Annual (maybe other formats?) in series name
+        if debug:
+            print("Remove Annual from series name and try again")
+        CMXID = findCMXID(series.replace(' Annual', ''), volume, issue, 'Annual', debug)   
+
     if CMXID is None:
         #try without volume, if one was passed in
         if debug:
@@ -47,12 +54,6 @@ def findCMXID(series, volume, issue, format, debug = False):
         if debug:
             print("Trying without issue number and without volume")
         CMXID = googleSeries(series, '', '', format, debug)        
-
-    if CMXID is None and ' Annual' in series:
-        #check for Annual (maybe other formats?) in series name
-        if debug:
-            print("Remove Annual from series name and try again")
-        CMXID = findCMXID(series.replace(' Annual', ''), volume, issue, 'Annual', debug)     
 
     if CMXID == -1:
         CMXID = None
