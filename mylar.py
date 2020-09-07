@@ -14,6 +14,8 @@ def mapCMXtoMetadata(CMXData):
     md.series = CMXData.get('series', None)
     md.volume = CMXData.get('volume', None) 
     md.issue = CMXData.get('issue', None)
+    md.issueCount = CMXData.get('issueCount', None)
+    md.format = CMXData.get('format', None)
 
     md.comments = CMXData.get('description', None)
     md.webLink = CMXData.get('webLink', None)
