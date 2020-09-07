@@ -63,8 +63,11 @@ def parseCMX(CMXID, debug = False):
         if cfg.scrape['issue']:
             appendIfNotNone(metadata, 'issue', match.group(5))
 
-        metadata['format'] = match.group(4) # currently just Annual observered in CMX data
-        metadata['ofcount'] = match.group(7) 
+        # currently just Annual observered in CMX data
+        if cfg.scrape['format']:
+            appendIfNotNone(metadata, 'format', match.group(4))
+        if cfg.scrape['issueCount']:
+            appendIfNotNone(metadata, 'issueCount', match.group(7))
     else:
         if cfg.scrape['series']:
             metadata['series'] = titleVolumeAndIssue

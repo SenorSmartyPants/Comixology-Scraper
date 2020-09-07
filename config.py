@@ -2,6 +2,8 @@ scrape = {
     'series': True,
     'volume': True,
     'issue':  True,
+    'issueCount':  True,
+    'format':  True,    
     'description': True,
     'webLink': True,
     'coverURL':  True,
