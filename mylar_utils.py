@@ -49,7 +49,7 @@ def verifyMatch(mdOriginal, mdNew):
     #does series in CBZ equal CMX series + format? 
     #most common for Annuals
     if mdNew.format:
-        seriesEqualFormat = mdOriginal.series.lower() == mdNew.series.lower() + ' ' + mdNew.format
+        seriesEqualFormat = mdOriginal.series.lower() == mdNew.series.lower() + ' ' + mdNew.format.lower()
     else:
         seriesEqualFormat = False
 
@@ -59,10 +59,10 @@ def verifyMatch(mdOriginal, mdNew):
 
     print("Series {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqual else '!='))
     if not seriesEqual:
-    	print("Series 'The' removed  {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqualNoThe else '!='))
+    	print("Series 'The' removed {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqualNoThe else '!='))
 
     if not seriesEqual and not seriesEqualNoThe:
-        print("Series format (Annual) {0} {2} {1}".format(mdOriginal.series, mdNew.format, '==' if seriesEqualFormat else '!='))
+        print("Series format (Annual) {0} {2} {1}".format(mdOriginal.series, mdNew.series + ' ' + mdNew.format, '==' if seriesEqualFormat else '!='))
     
     print("Number {0} {2} {1}".format(mdOriginal.issue, mdNew.issue, '==' if numberEqual else '!='))
     if not numberEqual:
