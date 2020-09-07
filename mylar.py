@@ -33,8 +33,9 @@ def mapCMXtoMetadata(CMXData):
 
     md.notes = CMXData.get('Notes', None)
 
-    md.criticalRating = CMXData.get('starRating', None)
     md.maturityRating = CMXData.get('ageRating', None)
+    #critialRating/CommunityRating is not saved in ComicInfo.xml
+    md.criticalRating = CMXData.get('starRating', None)
     #price does not get saved to ComicInfo.xml.
     #but does for COMET. Have not used this script with COMET output
     md.price = CMXData.get('price', None)
