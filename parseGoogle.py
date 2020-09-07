@@ -1,7 +1,14 @@
 import re
 from scraping import *
+import time
 
 def parseGoogleResult(URL, debug = False):
+    sleepseconds = 5
+    if debug:
+        print('sleeping {0} seconds...'.format(sleepseconds))
+    #wait X seconds so we don't hammer google and get blocked
+    time.sleep(sleepseconds)
+
     soup = fetchWebPage(URL)
 
     #no page returned
