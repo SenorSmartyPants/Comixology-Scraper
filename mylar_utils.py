@@ -45,6 +45,14 @@ def verifyMatch(mdOriginal, mdNew):
     print("Verifying match... existing data -> Comixology data")
     seriesEqual = mdOriginal.series.lower() == mdNew.series.lower()
     seriesEqualNoThe = mdOriginal.series.replace('The ', '', 1).lower() == mdNew.series.replace('The ', '', 1).lower()
+
+    #does series in CBZ equal CMX series + format? 
+    #most common for Annuals
+    if mdNew.format:
+        seriesEqualFormat = mdOriginal.series.lower() == mdNew.series.lower() + ' ' + mdNew.format
+    else:
+        seriesEqualFormat = False
+
     numberEqual = mdOriginal.issue == mdNew.issue
     #or number is 1 and issue is empty
     numberEqual2 = (int(mdOriginal.issue) == 1 and mdNew.issue == '')
@@ -52,6 +60,9 @@ def verifyMatch(mdOriginal, mdNew):
     print("Series {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqual else '!='))
     if not seriesEqual:
     	print("Series 'The' removed  {0} {2} {1}".format(mdOriginal.series, mdNew.series, '==' if seriesEqualNoThe else '!='))
+
+    if not seriesEqual and not seriesEqualNoThe:
+        print("Series format (Annual) {0} {2} {1}".format(mdOriginal.series, mdNew.format, '==' if seriesEqualFormat else '!='))
     
     print("Number {0} {2} {1}".format(mdOriginal.issue, mdNew.issue, '==' if numberEqual else '!='))
     if not numberEqual:
@@ -68,7 +79,7 @@ def verifyMatch(mdOriginal, mdNew):
     dateEqual = (datediff <= daysDifferenceTolerance)
     print("Dates {0} and {1}({2}) {3} within {4} days".format(originalDate, newDate, datediff, '==' if dateEqual else '!=', daysDifferenceTolerance))
 
-    return (seriesEqual or seriesEqualNoThe) and (numberEqual or numberEqual2) and dateEqual
+    return (seriesEqual or seriesEqualNoThe or seriesEqualFormat) and (numberEqual or numberEqual2) and dateEqual
 
 # mdOriginal = existing metadata in Comic archive
 # mdNew = newly scraped metadata
