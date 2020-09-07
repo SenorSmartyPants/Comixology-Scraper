@@ -13,7 +13,10 @@ import config as cfg
 CMXBASEURL = "https://www.comixology.com/a/digital-comic/"
 
 def buildComixologyURL(CMXID):
-    return CMXBASEURL + CMXID
+    if CMXID:
+        return CMXBASEURL + CMXID
+    else:
+        return None
 
 def parseReleaseDate(releaseDateElement, metadata):
     if releaseDateElement is not None:
@@ -37,6 +40,12 @@ def appendIfNotNone(list, key, value):
 
 def parseCMX(CMXID, debug = False):
     soup = fetchWebPage(buildComixologyURL(CMXID))
+
+    #no page returned
+    if not soup:
+        if debug:
+            print("http status != 200")
+        return None
 
     metadata = {}
 

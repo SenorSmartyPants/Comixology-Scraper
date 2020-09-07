@@ -3,12 +3,19 @@ from scraping import *
 
 def parseGoogleResult(URL, debug = False):
     soup = fetchWebPage(URL)
+
+    #no page returned
+    if not soup:
+        if debug:
+            #usually from 429, bot detected
+            print("http status != 200")
+        return -1
+
     #should be first result - if found
-    aResult = soup.find('a', href=re.compile('url\?q=https:\/\/(www|m).comixology.com'))
+    aResult = soup.find('a', href=re.compile('https:\/\/(www|m).comixology.com'))
 
     if aResult:
-        matchCMXURL = re.search('url\?q=(.+?)[&?%]', findAttributeValue(aResult, 'href'))
-        CMXURL = matchCMXURL.group(1)
+        CMXURL = findAttributeValue(aResult, 'href')
         if debug:
             print("URL = " + CMXURL) 
 

@@ -41,4 +41,12 @@ def getNextSibling(element):
 
 #return beautifulsoup or htmlDoc
 def fetchWebPage(URL):
-    return BeautifulSoup(requests.get(URL).content, 'html.parser')
+    if URL:
+        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,'referer':'https://www.google.com/'}
+        response = requests.get(URL, headers=headers)
+
+        if response.status_code == 200:
+            return BeautifulSoup(response.content, 'html.parser')
+        else:
+            print('http status code = {0}'.format(response.status_code))
+            return None

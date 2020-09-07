@@ -1,9 +1,9 @@
 from url_utils import UrlPathEncode
 from parseGoogle import parseGoogleResult
 
-GOOGLEURL = "https://www.google.com/search?q="
-GOOGLEBASESEARCH = "site:comixology.com inurl:digital-comic intitle:\"{0} ({1}\" intitle:\"#{2}\""
-COMICFORMATSEARCH = ' intitle:{0}'
+GOOGLEURL = "https://www.google.com/search?ie=utf-8&oe=utf-8&q="
+GOOGLEBASESEARCH = "comixology.com \"digital-comic\" \"{0} ({1}\" \"#{2}\""
+COMICFORMATSEARCH = ' {0}'
 
 def buildGoogleQueryURL(series, volume, issue, format, debug = False):
     QS = GOOGLEBASESEARCH.format(series, volume, issue)
@@ -47,5 +47,8 @@ def findCMXID(series, volume, issue, format, debug = False):
         if debug:
             print("Trying without issue number and without volume")
         CMXID = googleSeries(series, '', '', format, debug)        
+
+    if CMXID == -1:
+        CMXID = None
 
     return CMXID
