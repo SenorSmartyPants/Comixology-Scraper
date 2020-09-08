@@ -96,6 +96,12 @@ def updateMetadata(book, CMXData):
     if overwritable(book.Number):
         book.Number = CMXData.get('issue', book.Number)
 
+    if overwritable(book.Count):
+        book.Count = int(CMXData.get('issueCount', book.Count))
+
+    if overwritable(book.Format):
+        book.Format = CMXData.get('format', book.Format)
+
     if overwritable(book.Summary):
         book.Summary = CMXData.get('description', book.Summary)
     if overwritable(book.Web):
