@@ -139,7 +139,7 @@ def updateMetadata(book, CMXData):
     if overwritable(book.AgeRating):
         book.AgeRating = CMXData.get('ageRating', book.AgeRating)        
 
-    if overwritable(book.BookPrice):
+    if overwritable(book.BookPrice) and type(CMXData.get('price')) != str:
         book.BookPrice = float(CMXData.get('price', book.BookPriceAsText))
 
     #special handling for Notes
