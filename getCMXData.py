@@ -121,11 +121,13 @@ def parseCMX(CMXID, debug = False):
 
     if cfg.scrape['starRating']:
         # only include starRating in output if there at least starRatingMinCount reviews
-        starRatingCountText = getText(findElement(soup, 'div', 'itemprop', 'reviewCount'))
-        starRatingCount = int(re.search('Average Rating \((\d*)\):', starRatingCountText).group(1))
-        if (starRatingCount >= cfg.scrape['starRatingMinCount']):
-            appendIfNotNone(metadata, 'starRatingCount', starRatingCount)
-            appendIfNotNone(metadata, 'starRating', float(getText(findElement(soup, 'div', 'itemprop', 'ratingValue'))))
+        starElement = findElement(soup, 'div', 'itemprop', 'reviewCount')
+        if starElement:
+            starRatingCountText = getText(starElement)
+            starRatingCount = int(re.search('Average Rating \((\d*)\):', starRatingCountText).group(1))
+            if (starRatingCount >= cfg.scrape['starRatingMinCount']):
+                appendIfNotNone(metadata, 'starRatingCount', starRatingCount)
+                appendIfNotNone(metadata, 'starRating', float(getText(findElement(soup, 'div', 'itemprop', 'ratingValue'))))
 
     if cfg.scrape['ageRating']:
         appendIfNotNone(metadata, 'ageRating', getText(getNextSibling(findElement(soup, 'h4', text='Age Rating'))))
