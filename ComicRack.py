@@ -139,8 +139,11 @@ def updateMetadata(book, CMXData):
     if overwritable(book.AgeRating):
         book.AgeRating = CMXData.get('ageRating', book.AgeRating)        
 
-    if overwritable(book.BookPrice) and type(CMXData.get('price')) != str:
-        book.BookPrice = float(CMXData.get('price', book.BookPriceAsText))
+    if overwritable(book.BookPrice):
+        try:
+            book.BookPrice = float(CMXData.get('price', book.BookPriceAsText))
+        except:
+            print("book price not a number")
 
     #special handling for Notes
     #Add Comixology ID note if not present in the notes. Never overwrite notes
