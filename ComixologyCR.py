@@ -1,4 +1,4 @@
-from utils import *
+import CMXutils
 from System import DateTime
 from System.IO import Path
 
@@ -22,7 +22,7 @@ def ComixologyScraper(books):
         print("======> Scraping {0}".format(Path.GetFileName(book.FilePath)))
         
         CMXData = None
-        CMXID = getCMXIDFromString(book.Notes)
+        CMXID = CMXutils.getCMXIDFromString(book.Notes)
 
         if CMXID is not None:
             print("CMXID in notes = {0}".format(CMXID))
